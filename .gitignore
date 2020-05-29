@@ -57,3 +57,7 @@ buck-out/
 
 # CocoaPods
 /ios/Pods/
+
+src/meta/licenses.js
+src/config.js
+src/meta/version.json

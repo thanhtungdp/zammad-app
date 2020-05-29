@@ -128,13 +128,28 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    defaultConfig {
-        applicationId "com.zammadapp"
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+    def versionPropsFile = file('version.properties')
+
+    if (versionPropsFile.canRead()) {
+        def Properties versionProps = new Properties()
+
+        versionProps.load(new FileInputStream(versionPropsFile))
+
+        def vCode = versionProps['VERSION_CODE'].toInteger()
+        def vName = versionProps['VERSION_NAME'].toString()
+
+        defaultConfig {
+            applicationId "de.exanion.zammadapp"
+            minSdkVersion rootProject.ext.minSdkVersion
+            targetSdkVersion rootProject.ext.targetSdkVersion
+            versionCode vCode
+            versionName vName
+        }
+    } else {
+            throw new GradleException("Could not read version.properties!")
     }
+
+
     splits {
         abi {
             reset()
@@ -150,6 +165,16 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            def keyPropsFile = file('key/key.properties')
+            def Properties keyProps = new Properties()
+            keyProps.load(new FileInputStream(keyPropsFile))
+
+            storeFile file(keyProps['ZAMMADAPP_UPLOAD_STORE_FILE'])
+            storePassword keyProps['ZAMMADAPP_UPLOAD_STORE_PASSWORD']
+            keyAlias keyProps['ZAMMADAPP_UPLOAD_KEY_ALIAS']
+            keyPassword keyProps['ZAMMADAPP_UPLOAD_KEY_PASSWORD']
+        }
     }
     buildTypes {
         debug {
@@ -158,7 +183,7 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://facebook.github.io/react-native/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }

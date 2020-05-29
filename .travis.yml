@@ -1,0 +1,54 @@
+os: linux
+dist: xenial
+language: android
+notifications:
+    email:
+        recipients:
+            - kappelt.peter@gmail.com
+        on_success: always
+        on_failure: always
+git:
+  #Automatic submodule pulling fails...
+  submodules: false
+branches:
+  only:
+    - dev
+    - /^release-.*$/
+    - /[\d]+\.[\d]+\.[\d]/
+android:
+    components:
+        - build-tools-28.0.3
+        - android-28
+        - extra-google-google_play_services
+        - extra-google-m2repository
+        - extra-android-m2repository
+cache:
+  directories:
+    - node_modules
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+deploy:
+    provider: releases
+    body: Relase $VERSION
+    skip_cleanup: true
+    api_key: $GITHUB_DEPLOY_KEY
+    file: zammad-app-android-$VERSION.apk
+    draft: true
+    on:
+        tags: true
+before_install:
+    - nvm install 12
+    - export VERSION=$(cat VERSION)
+    - echo -e "machine github.com\n  login exanion-travis\n  password $GITHUB_TRAVIS_PWD" > ~/.netrc
+    - git submodule update --recursive --init
+    - git submodule add https://github.com/exanion/zammad-app-buildconfig.git _config
+install:
+    - yarn install
+    - bash createVersionMetaInfo.sh
+    - bash collectDependencyLicenses.sh
+    - cp _config/config.js src/config.js
+script:
+    - cd android 
+    - sh gradlew assembleRelease
+    - cd ../
+    - cp android/app/build/outputs/apk/release/app-release.apk zammad-app-android-$VERSION.apk

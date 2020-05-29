@@ -2,18 +2,21 @@
  * @format
  */
 
-import React from 'react';
-import {AppRegistry} from 'react-native';
+import 'react-native-gesture-handler';
+import { AppRegistry } from 'react-native';
 import App from './App';
-import {Provider as PaperProvider} from 'react-native-paper';
-import {name as appName} from './app.json';
+import { name as appName } from './app.json';
 
-export default function Main() {
-  return (
-    <PaperProvider>
-      <App />
-    </PaperProvider>
-  );
+/**
+ * Workaround for axios not finding btoa functions
+ * @Todo Check later if has been fixed in axios or elsewhere
+ */
+import {decode, encode} from 'base-64'
+if (!global.btoa) {
+    global.btoa = encode;
+}
+if (!global.atob) {
+    global.atob = decode;
 }
 
-AppRegistry.registerComponent(appName, () => Main);
+AppRegistry.registerComponent(appName, () => App);

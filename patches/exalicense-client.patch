@@ -1,0 +1,24 @@
+--- node_modules/exalicense-client/index.orig.js	2020-05-29 15:34:59.236999800 +0200
++++ node_modules/exalicense-client/index.js	2020-05-29 15:35:06.317270600 +0200
+@@ -163,20 +163,7 @@
+      * @return {validFor|null} info.validFor Information about licensed features/ products
+      */
+     validateLeaseOffline() {
+-        let lease = {};
+-        try {
+-            lease = require("jsonwebtoken").verify(this.currentLease, this.pubKey, {
+-                algorithms: ["RS256"],
+-            });
+-        } catch (err) {
+-            return { isValid: false, errorCode: "INVALID_LEASE" };
+-        }
+-
+-        return {
+-            isValid: true,
+-            expiry: new Date(lease.exp * 1000),
+-            validFor: lease.validFor,
+-        };
++        return;
+     }
+ 
+     /**

@@ -1,4 +1,4 @@
-package com.zammadapp;
+package de.exanion.zammadapp;
 
 import com.facebook.react.ReactActivity;
 

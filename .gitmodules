@@ -1,0 +1,3 @@
+[submodule "android/app/key"]
+	path = android/app/key
+	url = https://github.com/exanion/zammad-android-key.git
