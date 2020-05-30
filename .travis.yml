@@ -48,7 +48,9 @@ install:
     - bash collectDependencyLicenses.sh
     - cp _config/config.js src/config.js
 script:
-    - cd android 
+    - cd android
     - sh gradlew assembleRelease
     - cd ../
     - cp android/app/build/outputs/apk/release/app-release.apk zammad-app-android-$VERSION.apk
+    - git submodule add https://github.com/exanion/zammad-play-publisher.git _playpub
+    - '[[ ! "$(cat VERSION)" == "0.0.1-dev" ]] && sh _playpub/setup.sh && python3.6 _playpub/upload-apk.py de.exanion.zammadapp zammad-app-android-$VERSION.apk || true'
